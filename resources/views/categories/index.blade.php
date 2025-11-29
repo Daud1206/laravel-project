@@ -1,65 +1,89 @@
 @extends('layouts.main')
 
-@section('title', 'Categories')
-
 @section('content')
-<div class="card shadow-sm">
-    <div class="card-body">
-
+    <div class="container py-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="fw-bold">Category List</h4>
+            <h1 class="fw-bold">Category List</h1>
 
-            <a href="{{ route('categories.create') }}" class="btn btn-success">
-                + Add Category
-            </a>
+            {{-- Admin only --}}
+            @if(auth()->user()->role === 'admin')
+                <a href="{{ route('admin.categories.create') }}" class="btn btn-success">
+                    + Add Category
+                </a>
+            @endif
         </div>
 
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+        <!-- SEARCH BAR (Admin and User can search) -->
+        <form method="GET" action="{{ route('categories.index') }}" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search categories..."
+                    value="{{ $search ?? '' }}">
+                <button class="btn btn-primary">Search</button>
+
+                @if(!empty($search))
+                    <a href="{{ route('categories.index') }}" class="btn btn-secondary">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
         @endif
 
-        <table class="table table-bordered mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th style="width: 60px;">#</th>
-                    <th>Name</th>
-                    <th style="width: 160px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($categories as $category)
-                <tr>
-                    <td>{{ $loop->iteration }}</td>
-                    <td>{{ $category->name }}</td>
-                    <td>
-                        <a href="{{ route('categories.edit', $category->id) }}"
-                           class="btn btn-sm btn-warning">
-                            Edit
-                        </a>
+        @if($categories->isEmpty())
+            <div class="text-center text-muted py-5">
+                <h4>No categories yet.</h4>
+                <p>Admin can create categories to classify events.</p>
+            </div>
+        @else
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table table-bordered mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>Name</th>
+                                <th style="width: 180px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($categories as $category)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $category->name }}</td>
+                                    <td>
+                                        {{-- Everyone can view category --}}
+                                        <a href="{{ route('categories.show', $category->id) }}" class="text-primary text-decoration-none">
+                                            View
+                                        </a>
 
-                        <form action="{{ route('categories.destroy', $category->id) }}"
-                              method="POST"
-                              class="d-inline"
-                              onsubmit="return confirm('Delete this category?');">
+                                        {{-- Admin can edit and delete --}}
+                                        @if(auth()->user()->role === 'admin')
+                                            <a href="{{ route('categories.edit', $category->id) }}" class="ms-2 text-secondary text-decoration-none">
+                                                Edit
+                                            </a>
 
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="3" class="text-center py-3 text-muted">
-                        No categories found.
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+                                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline"
+                                                onsubmit="return confirm('Delete this category?');">
+                                                @csrf
+                                                @method('DELETE')
 
+                                                <button class="btn btn-sm btn-outline-danger ms-2">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @endif
     </div>
-</div>
 @endsection

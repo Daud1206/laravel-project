@@ -14,6 +14,21 @@
             @endif
         </div>
 
+        <!-- SEARCH BAR -->
+        <form method="GET" action="{{ route('categories.index') }}" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search categories..."
+                    value="{{ request()->search ?? '' }}">
+                <button class="btn btn-primary">Search</button>
+
+                @if(!empty(request()->search))
+                    <a href="{{ route('categories.index') }}" class="btn btn-secondary">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+
         @if(session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -81,6 +96,11 @@
                 </div>
             </div>
         @endif
+
+        <!-- Pagination -->
+        <div class="mt-3">
+            {{ $categories->links() }}
+        </div>
 
     </div>
 @endsection

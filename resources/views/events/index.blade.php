@@ -2,16 +2,32 @@
 
 @section('content')
     <div class="container py-5">
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="fw-bold">All Events</h1>
 
-            {{-- Hanya admin yang boleh create --}}
+            {{-- Admin only can create event --}}
             @if(auth()->user()->role === 'admin')
                 <a href="{{ route('events.create') }}" class="btn btn-success">
                     Create New Event
                 </a>
             @endif
         </div>
+
+        <!-- SEARCH BAR (Admin and User can search) -->
+        <form method="GET" action="{{ route('events.index') }}" class="mb-3">
+            <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search events..."
+                    value="{{ request()->search ?? '' }}">
+                <button class="btn btn-primary">Search</button>
+
+                @if(!empty(request()->search))
+                    <a href="{{ route('events.index') }}" class="btn btn-secondary">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
 
         @if($events->isEmpty())
             <div class="text-center text-muted py-5">

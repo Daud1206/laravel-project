@@ -11,16 +11,26 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $events = Event::with('category')
-                       ->orderBy('date', 'asc')
-                       ->get();
+        $search = $request->input('search');
 
-        return view('events.index', [
-            'events' => $events,
-        ]);
+        // Apply search filter if there is a search term
+        $events = Event::when($search, function ($query) use ($search) {
+            $query->where('title', 'LIKE', "%$search%")
+                ->orWhereHas('category', function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%$search%");
+                });
+        })
+            ->with('category')
+            ->orderBy('date', 'asc')
+            ->paginate(10)
+            ->appends(['search' => $search]);
+
+        return view('events.index', compact('events', 'search'));
     }
+
+
 
     /**
      * Show the form for creating a new resource.
