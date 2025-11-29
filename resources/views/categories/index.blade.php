@@ -7,7 +7,7 @@
 
             {{-- Admin only --}}
             @if(auth()->user()->role === 'admin')
-                <a href="{{ route('admin.categories.create') }}" class="btn btn-success">
+                <a href="{{ route('categories.create') }}" class="btn btn-success">
                     + Add Category
                 </a>
             @endif

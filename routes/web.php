@@ -24,20 +24,25 @@ Route::middleware('guest')->group(function () {
 // ===============================
 // USER VIEW — CATEGORIES & EVENTS
 // ===============================
+
 Route::middleware('auth')->group(function () {
-    Route::get('/categories', [CategoryController::class, 'userIndex'])->name('categories.index');
-    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
-    Route::get('/events', [EventController::class, 'index'])->name('events.index');
-    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
+    Route::get('/categories', [CategoryController::class, 'userIndex'])->name('categories.index'); // Categories user view
+    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show'); // Category detail view
+    Route::get('/events', [EventController::class, 'index'])->name('events.index'); // Events user view
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show'); // Event detail view
 });
+
 
 // ===============================
 // ADMIN ONLY — FULL CRUD CATEGORIES + EVENTS
 // ===============================
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('events', [EventController::class, 'index'])->name('admin.events.index');  // Menambahkan route untuk admin events index
-    Route::resource('events', EventController::class)->except(['index']); // Menjaga route lainnya
+    // Menambahkan rute eksplisit untuk 'create'
+    Route::get('categories/create', [CategoryController::class, 'create'])->name('admin.categories.create');
+
     Route::resource('categories', CategoryController::class);
+    Route::resource('events', EventController::class);
 });
+
 
 require __DIR__ . '/auth.php';
