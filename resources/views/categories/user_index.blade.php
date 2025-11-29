@@ -1,0 +1,86 @@
+@extends('layouts.main')
+
+@section('content')
+    <div class="container py-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fw-bold">Categories</h1>
+
+            {{-- Admin only --}}
+            @if(auth()->user()->role === 'admin')
+                <a href="{{ route('categories.create') }}" class="btn btn-success">
+                    + Add Category
+                </a>
+            @endif
+        </div>
+
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if($categories->isEmpty())
+            <div class="text-center text-muted py-5">
+                <h4>No categories yet.</h4>
+                <p>Admin can create categories to classify events.</p>
+            </div>
+        @else
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+
+                    <table class="table table-bordered mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 60px;">#</th>
+                                <th>Name</th>
+                                <th style="width: 180px;">Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach($categories as $category)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ $category->name }}</td>
+
+                                    <td>
+
+                                        {{-- Everyone can view category --}}
+                                        <a href="{{ route('categories.show', $category->id) }}"
+                                            class="text-primary text-decoration-none">
+                                            View
+                                        </a>
+
+                                        {{-- Edit & Delete hanya untuk admin --}}
+                                        @if(auth()->user()->role === 'admin')
+                                            <a href="{{ route('categories.edit', $category->id) }}"
+                                                class="ms-2 text-secondary text-decoration-none">
+                                                Edit
+                                            </a>
+
+                                            <form action="{{ route('categories.destroy', $category->id) }}"
+                                                  method="POST"
+                                                  class="d-inline"
+                                                  onsubmit="return confirm('Delete this category?');">
+
+                                                @csrf
+                                                @method('DELETE')
+
+                                                <button class="btn btn-sm btn-outline-danger ms-2">
+                                                    Delete
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        @endif
+
+    </div>
+@endsection
