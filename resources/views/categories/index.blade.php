@@ -7,7 +7,7 @@
 
             {{-- Admin only --}}
             @if(auth()->user()->role === 'admin')
-                <a href="{{ route('admin.categories.create') }}" class="btn btn-success">
+                <a href="{{ route('categories.create') }}" class="btn btn-success">
                     + Add Category
                 </a>
             @endif
@@ -63,11 +63,11 @@
                                     {{-- Show Actions only for Admin --}}
                                     @if(auth()->user()->role === 'admin')
                                         <td>
-                                            <a href="{{ route('admin.categories.edit', $category->id) }}" class="ms-2 text-secondary text-decoration-none">
+                                            <a href="{{ route('categories.edit', $category->id) }}" class="ms-2 text-secondary text-decoration-none">
                                                 Edit
                                             </a>
 
-                                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this category?');">
+                                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this category?');">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button class="btn btn-sm btn-outline-danger ms-2">

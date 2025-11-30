@@ -55,6 +55,17 @@
                 >
             </div>
 
+            <!-- ➕ Contact Phone Field -->
+            <div class="mb-3">
+                <label>Contact Phone</label>
+                <input
+                    type="text"
+                    name="contact_phone"
+                    class="form-control"
+                    value="{{ old('contact_phone') }}"
+                >
+            </div>
+
             <div class="mb-3">
                 <label>Description (optional)</label>
                 <textarea name="description" class="form-control"></textarea>

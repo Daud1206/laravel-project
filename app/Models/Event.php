@@ -12,6 +12,7 @@ class Event extends Model
         'category_id',
         'location',
         'date',
+        'contact_phone',
         'description',
         'user_id',
         // jangan masukkan status temporal karena computed

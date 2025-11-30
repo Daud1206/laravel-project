@@ -13,7 +13,8 @@
             <!-- Title Field -->
             <div class="mb-3">
                 <label for="title" class="form-label">Event Title</label>
-                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" id="title" value="{{ old('title', $event->title) }}" required>
+                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror" id="title"
+                    value="{{ old('title', $event->title) }}" required>
                 @error('title')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -22,7 +23,8 @@
             <!-- Category Field -->
             <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
-                <select name="category_id" id="category" class="form-select @error('category_id') is-invalid @enderror" required>
+                <select name="category_id" id="category" class="form-select @error('category_id') is-invalid @enderror"
+                    required>
                     <option value="">Select Category</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ old('category_id', $event->category_id) == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
@@ -36,7 +38,8 @@
             <!-- Date Field -->
             <div class="mb-3">
                 <label for="date" class="form-label">Event Date</label>
-                <input type="date" name="date" class="form-control @error('date') is-invalid @enderror" id="date" value="{{ old('date', $event->date) }}" required>
+                <input type="date" name="date" class="form-control @error('date') is-invalid @enderror" id="date"
+                    value="{{ old('date', $event->date) }}" required>
                 @error('date')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -45,7 +48,8 @@
             <!-- Location Field -->
             <div class="mb-3">
                 <label for="location" class="form-label">Location</label>
-                <input type="text" name="location" class="form-control @error('location') is-invalid @enderror" id="location" value="{{ old('location', $event->location) }}">
+                <input type="text" name="location" class="form-control @error('location') is-invalid @enderror"
+                    id="location" value="{{ old('location', $event->location) }}">
                 @error('location')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -54,7 +58,8 @@
             <!-- Description Field -->
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea name="description" class="form-control @error('description') is-invalid @enderror" id="description" rows="4">{{ old('description', $event->description) }}</textarea>
+                <textarea name="description" class="form-control @error('description') is-invalid @enderror"
+                    id="description" rows="4">{{ old('description', $event->description) }}</textarea>
                 @error('description')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -62,12 +67,11 @@
 
             <!-- Phone Number Field -->
             <div class="mb-3">
-                <label for="contact" class="form-label">Contact Number</label>
-                <input type="text" name="contact" class="form-control @error('contact') is-invalid @enderror" id="contact" value="{{ old('contact', $event->contact) }}">
-                @error('contact')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
+                <label for="contact_phone" class="form-label">Contact Number</label>
+                <input type="text" name="contact_phone" class="form-control" id="contact_phone"
+                    value="{{ old('contact_phone', $event->contact_phone) }}">
             </div>
+
 
             <!-- Submit Button -->
             <div class="mb-3">
