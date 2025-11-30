@@ -8,30 +8,13 @@ use Illuminate\Http\Request;
 class CategoryController extends Controller
 {
     // =============================
-    // USER VIEW ONLY
-    // =============================
-    public function userIndex(Request $request)
-    {
-        $search = $request->input('search');
-        $categories = Category::when($search, function ($query) use ($search) {
-            $query->where('name', 'LIKE', "%$search%");
-        })
-            ->orderBy('id', 'DESC')
-            ->paginate(10)
-            ->appends(['search' => $search]);
-
-        return view('categories.user_index', compact('categories', 'search'));
-    }
-
-
-
-    // =============================
-    // ADMIN CRUD
+    // USER & ADMIN VIEW (SAME VIEW)
     // =============================
     public function index(Request $request)
     {
         $search = $request->input('search');
 
+        // Query categories with search functionality
         $categories = Category::when($search, function ($query) use ($search) {
             $query->where('name', 'LIKE', "%$search%");
         })
@@ -39,10 +22,13 @@ class CategoryController extends Controller
             ->paginate(10)
             ->appends(['search' => $search]);
 
+        // Return the same 'categories.index' view for both user and admin
         return view('categories.index', compact('categories', 'search'));
     }
 
-
+    // =============================
+    // ADMIN CRUD
+    // =============================
     public function create()
     {
         return view('categories.create');
@@ -86,5 +72,4 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')
             ->with('success', 'Category deleted.');
     }
-
 }

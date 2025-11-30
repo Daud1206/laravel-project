@@ -62,6 +62,7 @@ class EventController extends Controller
             'category_id' => 'required',
             'location' => 'nullable|string',
             'date' => 'required|date',
+            'contact_phone' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
 
@@ -118,6 +119,7 @@ class EventController extends Controller
             'category_id' => 'required',
             'location' => 'nullable|string',
             'date' => 'required|date',
+            'contact_phone' => 'nullable|string',
             'description' => 'nullable|string',
         ]);
 

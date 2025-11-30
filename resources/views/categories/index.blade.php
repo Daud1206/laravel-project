@@ -7,7 +7,7 @@
 
             {{-- Admin only --}}
             @if(auth()->user()->role === 'admin')
-                <a href="{{ route('categories.create') }}" class="btn btn-success">
+                <a href="{{ route('admin.categories.create') }}" class="btn btn-success">
                     + Add Category
                 </a>
             @endif
@@ -47,7 +47,11 @@
                             <tr>
                                 <th style="width: 60px;">#</th>
                                 <th>Name</th>
-                                <th style="width: 180px;">Actions</th>
+
+                                {{-- Show Actions only for Admin --}}
+                                @if(auth()->user()->role === 'admin')
+                                    <th style="width: 180px;">Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -55,29 +59,23 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $category->name }}</td>
-                                    <td>
-                                        {{-- Everyone can view category --}}
-                                        <a href="{{ route('categories.show', $category->id) }}" class="text-primary text-decoration-none">
-                                            View
-                                        </a>
 
-                                        {{-- Admin can edit and delete --}}
-                                        @if(auth()->user()->role === 'admin')
-                                            <a href="{{ route('categories.edit', $category->id) }}" class="ms-2 text-secondary text-decoration-none">
+                                    {{-- Show Actions only for Admin --}}
+                                    @if(auth()->user()->role === 'admin')
+                                        <td>
+                                            <a href="{{ route('admin.categories.edit', $category->id) }}" class="ms-2 text-secondary text-decoration-none">
                                                 Edit
                                             </a>
 
-                                            <form action="{{ route('categories.destroy', $category->id) }}" method="POST" class="d-inline"
-                                                onsubmit="return confirm('Delete this category?');">
+                                            <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Delete this category?');">
                                                 @csrf
                                                 @method('DELETE')
-
                                                 <button class="btn btn-sm btn-outline-danger ms-2">
                                                     Delete
                                                 </button>
                                             </form>
-                                        @endif
-                                    </td>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
