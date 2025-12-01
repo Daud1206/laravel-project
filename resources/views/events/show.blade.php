@@ -7,9 +7,15 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
 
+            @php
+                $backUrl = (isset($from) && $from === 'dashboard')
+                    ? route('dashboard')
+                    : url()->previous();
+            @endphp
+
             <!-- Back Button -->
-            <a href="{{ route('events.index') }}" class="btn btn-outline-secondary mb-3">
-                ← Back to Events
+            <a href="{{ $backUrl }}" class="btn btn-outline-secondary mb-3">
+                ← Back
             </a>
 
             <div class="card shadow-sm">
@@ -27,7 +33,7 @@
                     <!-- Event Info Section -->
                     <div class="mb-4">
                         <h6 class="text-uppercase text-muted mb-2">Event Information</h6>
-                        
+
                         <div class="mb-2">
                             <strong class="text-dark">Location:</strong>
                             <span>{{ $event->location ?? 'No location provided' }}</span>
@@ -41,6 +47,11 @@
                         <div class="mb-2">
                             <strong class="text-dark">Contact Phone:</strong>
                             <span>{{ $event->contact_phone ?? 'No contact number provided.' }}</span>
+                        </div>
+
+                        <div class="mb-2">
+                            <strong class="text-dark">Participants Joined:</strong>
+                            <span class="fw-bold text-primary">{{ $event->users->count() }}</span>
                         </div>
                     </div>
 
@@ -65,8 +76,31 @@
                         @endif
                     </div>
 
+                    <!-- JOIN / LEAVE BUTTON FOR NORMAL USERS -->
+                    @if(auth()->check() && auth()->user()->role !== 'admin')
+                        <hr>
+
+                        @if($event->users->contains(auth()->id()))
+                            <!-- User already joined -->
+                            <form action="{{ route('events.leave', $event->id) }}" method="POST">
+                                @csrf
+                                <button class="btn btn-danger w-100">
+                                    Leave Event
+                                </button>
+                            </form>
+                        @else
+                            <!-- User not joined -->
+                            <form action="{{ route('events.join', $event->id) }}" method="POST">
+                                @csrf
+                                <button class="btn btn-primary w-100">
+                                    Join Event
+                                </button>
+                            </form>
+                        @endif
+                    @endif
+
                     <!-- Admin Controls -->
-                    @if(auth()->user()->role === 'admin')
+                    @if(auth()->check() && auth()->user()->role === 'admin')
                         <hr>
 
                         <div class="d-flex gap-2 mt-3">

@@ -15,9 +15,15 @@
                 <label>Category Name</label>
                 <input type="text"
                        name="name"
-                       class="form-control"
+                       class="form-control @error('name') is-invalid @enderror"
                        value="{{ old('name') }}"
                        required>
+
+                @error('name')
+                    <div class="invalid-feedback">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <button class="btn btn-success px-4">Save</button>

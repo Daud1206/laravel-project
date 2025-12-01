@@ -7,28 +7,22 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    // =============================
-    // USER & ADMIN VIEW (SAME VIEW)
-    // =============================
+
     public function index(Request $request)
     {
         $search = $request->input('search');
 
-        // Query categories with search functionality
+
         $categories = Category::when($search, function ($query) use ($search) {
             $query->where('name', 'LIKE', "%$search%");
         })
-            ->orderBy('id', 'DESC')
+            ->orderBy('name', 'ASC') 
             ->paginate(10)
             ->appends(['search' => $search]);
 
-        // Return the same 'categories.index' view for both user and admin
         return view('categories.index', compact('categories', 'search'));
     }
 
-    // =============================
-    // ADMIN CRUD
-    // =============================
     public function create()
     {
         return view('categories.create');
@@ -36,8 +30,9 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+   
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255|unique:categories,name',
         ]);
 
         Category::create([
@@ -54,8 +49,9 @@ class CategoryController extends Controller
 
     public function update(Request $request, Category $category)
     {
+
         $request->validate([
-            'name' => 'required|string|max:255'
+            'name' => 'required|string|max:255|unique:categories,name,' . $category->id,
         ]);
 
         $category->update([

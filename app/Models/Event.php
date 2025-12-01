@@ -15,24 +15,26 @@ class Event extends Model
         'contact_phone',
         'description',
         'user_id',
-        // jangan masukkan status temporal karena computed
     ];
 
-    // Relationship
     public function category()
     {
         return $this->belongsTo(Category::class);
     }
 
-    /**
-     * Return temporal status based on date:
-     * - 'expired'      => event date < today
-     * - 'ongoing'      => event date == today
-     * - 'coming_soon'  => event date > today
-     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'event_user')
+                    ->withTimestamps();
+    }
+
     public function getTemporalStatusAttribute()
     {
-        // gunakan Carbon::today() agar timezone aplikasi konsisten
         $today = Carbon::today();
         $eventDate = Carbon::parse($this->date)->startOfDay();
 
@@ -47,7 +49,6 @@ class Event extends Model
         return 'coming_soon';
     }
 
-    // Helpers (optional, memudahkan di controller/view)
     public function isExpired()
     {
         return $this->temporal_status === 'expired';

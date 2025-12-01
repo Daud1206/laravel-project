@@ -5,39 +5,61 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Event;
+use App\Models\User;
 
 class EventController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        $search = $request->input('search');
+        $search = strtolower($request->input('search'));
+        $status = $request->input('status');
+        $today = now()->toDateString();
 
-        // Apply search filter if there is a search term
-        $events = Event::when($search, function ($query) use ($search) {
-            $query->where('title', 'LIKE', "%$search%")
-                ->orWhereHas('category', function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%$search%");
-                });
-        })
-            ->with('category')
+        $events = Event::query();
+
+        if ($status === 'coming') {
+            $events->whereDate('date', '>', $today);
+        } elseif ($status === 'ongoing') {
+            $events->whereDate('date', '=', $today);
+        } elseif ($status === 'expired') {
+            $events->whereDate('date', '<', $today);
+        }
+
+        if (!empty($search)) {
+
+            $events->where(function ($query) use ($search, $today) {
+
+                if ($search === 'coming' || $search === 'coming soon') {
+                    $query->whereDate('date', '>', $today);
+                } elseif ($search === 'ongoing') {
+                    $query->whereDate('date', '=', $today);
+                } elseif ($search === 'expired') {
+                    $query->whereDate('date', '<', $today);
+                }
+
+                $query->orWhere('title', 'LIKE', "%$search%")
+                    ->orWhereHas('category', function ($cat) use ($search) {
+                        $cat->where('name', 'LIKE', "%$search%");
+                    });
+            });
+        }
+
+        $events = $events->with('category')
             ->orderBy('date', 'asc')
             ->paginate(10)
-            ->appends(['search' => $search]);
+            ->appends([
+                'search' => $request->search,
+                'status' => $request->status
+            ]);
 
-        return view('events.index', compact('events', 'search'));
+        return view('events.index', compact('events', 'search', 'status'));
     }
 
 
 
-    /**
-     * Show the form for creating a new resource.
-     */
+
     public function create()
     {
-        // Only admins can create events
         if (auth()->user()->role !== 'admin') {
             abort(403);
         }
@@ -47,12 +69,8 @@ class EventController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Only admins can store events
         if (auth()->user()->role !== 'admin') {
             abort(403);
         }
@@ -72,24 +90,21 @@ class EventController extends Controller
         return redirect('/events')->with('success', 'Event created successfully!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $event = Event::with('category')->findOrFail($id);
 
+        $from = $request->query('from', 'events');
+
         return view('events.show', [
             'event' => $event,
+            'from' => $from,
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit($id)
     {
-        // Only admins can edit events
         if (auth()->user()->role !== 'admin') {
             abort(403);
         }
@@ -102,12 +117,8 @@ class EventController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
-        // Only admins can update events
         if (auth()->user()->role !== 'admin') {
             abort(403);
         }
@@ -128,12 +139,8 @@ class EventController extends Controller
         return redirect('/events')->with('success', 'Event updated.');
     }
 
-    /**
-     * Remove the specified resource.
-     */
     public function destroy($id)
     {
-        // Only admins can delete events
         if (auth()->user()->role !== 'admin') {
             abort(403);
         }
@@ -143,4 +150,25 @@ class EventController extends Controller
 
         return redirect()->route('events.index')->with('success', 'Event deleted.');
     }
+
+    public function join($id)
+    {
+        $event = Event::findOrFail($id);
+        $user = auth()->user();
+
+        if ($event->users()->where('user_id', $user->id)->exists()) {
+            return back()->with('info', 'You already joined this event.');
+        }
+
+        $event->users()->attach($user->id);
+
+        return back()->with('success', 'Successfully joined event!');
+    }
+
+    public function leave(Event $event)
+    {
+        $event->users()->detach(auth()->id());
+        return back()->with('success', 'You left the event.');
+    }
+
 }

@@ -15,7 +15,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Tambahkan akun admin default
+
         User::create([
             'name' => 'daud',
             'email' => 'admin@gmail.com',
@@ -23,9 +23,6 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // Jalankan seeder lain (misal kategori)
-        // $this->call([
-        //     CategorySeeder::class,
-        // ]);
+
     }
 }

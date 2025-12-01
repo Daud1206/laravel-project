@@ -6,7 +6,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="fw-bold">Categories</h1>
 
-            {{-- Admin only --}}
             @if(auth()->user()->role === 'admin')
                 <a href="{{ route('categories.create') }}" class="btn btn-success">
                     + Add Category
@@ -14,7 +13,6 @@
             @endif
         </div>
 
-        <!-- SEARCH BAR -->
         <form method="GET" action="{{ route('categories.index') }}" class="mb-3">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Search categories..."
@@ -61,13 +59,11 @@
 
                                     <td>
 
-                                        {{-- Everyone can view category --}}
                                         <a href="{{ route('categories.show', $category->id) }}"
                                             class="text-primary text-decoration-none">
                                             View
                                         </a>
 
-                                        {{-- Edit & Delete hanya untuk admin --}}
                                         @if(auth()->user()->role === 'admin')
                                             <a href="{{ route('categories.edit', $category->id) }}"
                                                 class="ms-2 text-secondary text-decoration-none">
@@ -97,7 +93,6 @@
             </div>
         @endif
 
-        <!-- Pagination -->
         <div class="mt-3">
             {{ $categories->links() }}
         </div>

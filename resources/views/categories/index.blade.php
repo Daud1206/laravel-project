@@ -5,7 +5,6 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h1 class="fw-bold">Category List</h1>
 
-            {{-- Admin only --}}
             @if(auth()->user()->role === 'admin')
                 <a href="{{ route('categories.create') }}" class="btn btn-success">
                     + Add Category
@@ -13,7 +12,6 @@
             @endif
         </div>
 
-        <!-- SEARCH BAR (Admin and User can search) -->
         <form method="GET" action="{{ route('categories.index') }}" class="mb-3">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Search categories..."
@@ -48,7 +46,6 @@
                                 <th style="width: 60px;">#</th>
                                 <th>Name</th>
 
-                                {{-- Show Actions only for Admin --}}
                                 @if(auth()->user()->role === 'admin')
                                     <th style="width: 180px;">Actions</th>
                                 @endif
@@ -60,7 +57,6 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $category->name }}</td>
 
-                                    {{-- Show Actions only for Admin --}}
                                     @if(auth()->user()->role === 'admin')
                                         <td>
                                             <a href="{{ route('categories.edit', $category->id) }}" class="ms-2 text-secondary text-decoration-none">
