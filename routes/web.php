@@ -6,35 +6,30 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EventController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect('/login');
-});
 
-// DASHBOARD
+Route::redirect('/', '/login');
+
+
 Route::get('/dashboard', [DashboardController::class, 'dashboard'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-// REGISTER
+
 Route::middleware('guest')->group(function () {
     Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
 
-// USER VIEW — CATEGORIES & EVENTS
-
 Route::middleware('auth')->group(function () {
-    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index'); // Categories user view
-    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show'); // Category detail view
-    Route::get('/events', [EventController::class, 'index'])->name('events.index'); // Events user view
-    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show'); // Event detail view
+    Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('categories.show');
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+    Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
     Route::post('/events/{event}/join', [EventController::class, 'join'])->name('events.join');
     Route::post('/events/{event}/leave', [EventController::class, 'leave'])->name('events.leave');
 });
 
-
-// ADMIN ONLY — FULL CRUD CATEGORIES + EVENTS
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('categories/create', [CategoryController::class, 'create'])->name('admin.categories.create');
     Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('admin.categories.edit');
